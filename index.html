@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tính Calories Nguyên Liệu</title>
+</head>
+<body>
+  <h1>Tính Calories theo nguyên liệu</h1>
+
+  <input type="file" id="fileInput" accept=".json">
+  <br><br>
+
+  <label for="foodSelect">Chọn nguyên liệu:</label>
+  <select id="foodSelect">
+    <option value="">-- Vui lòng chọn --</option>
+  </select>
+
+  <p id="caloriesDisplay">Calories: -</p>
+
+  <script>
+    let foodData = [];
+
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = JSON.parse(e.target.result);
+        foodData = content.FoundationFoods;
+
+        const select = document.getElementById('foodSelect');
+        foodData.forEach((item, index) => {
+          const option = document.createElement('option');
+          option.value = index;
+          option.textContent = item.description;
+          select.appendChild(option);
+        });
+      };
+      reader.readAsText(file);
+    });
+
+    document.getElementById('foodSelect').addEventListener('change', function(event) {
+      const index = event.target.value;
+      const item = foodData[index];
+
+      if (!item) return;
+
+      const energy = item.foodNutrients.find(nutrient =>
+        nutrient.nutrient?.name === "Energy"
+      );
+
+      const calories = energy ? energy.amount : "Không rõ";
+      document.getElementById('caloriesDisplay').textContent = "Calories: " + calories + " kcal / 100g";
+    });
+  </script>
+</body>
+</html>
