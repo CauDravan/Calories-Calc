@@ -1,4 +1,5 @@
-const ingredientsData = "https://raw.githubusercontent.com/CauDravan/Calories-calc/main/data.json";
+const dataUrl = "https://raw.githubusercontent.com/CauDravan/Calories-calc/main/data.json";
+let ingredientsData = null;
 let selectedIngredients = [];
 let totalCalories = 0;
 
@@ -10,16 +11,32 @@ const selectedIngredientsDiv = document.getElementById('selected-ingredients');
 const totalCaloriesSpan = document.getElementById('total-calories');
 const clearAllBtn = document.getElementById('clear-all');
 
-// Khởi tạo ứng dụng
-function initApp() {
+async function initApp() {
+    try {
+        const res = await fetch(dataUrl);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        ingredientsData = data.FoundationFoods;
+    } catch (err) {
+        console.error('Không tải được dữ liệu:', err);
+        alert('Lỗi tải dữ liệu nguyên liệu. Vui lòng kiểm tra lại URL hoặc kết nối.');
+        return;
+    }
     populateIngredientSelect();
     addEventListeners();
     updateDisplay();
 }
 
-// Điền dữ liệu vào select
 function populateIngredientSelect() {
-    ingredientsData.FoundationFoods.forEach((ingredient, index) => {
+    // thêm tùy chọn mặc định
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Chọn nguyên liệu';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    ingredientSelect.appendChild(placeholder);
+
+    ingredientsData.forEach((ingredient, index) => {
         const option = document.createElement('option');
         option.value = index;
         option.textContent = ingredient.description;
@@ -27,12 +44,9 @@ function populateIngredientSelect() {
     });
 }
 
-// Thêm event listeners
 function addEventListeners() {
     addIngredientBtn.addEventListener('click', addIngredient);
     clearAllBtn.addEventListener('click', clearAllIngredients);
-    
-    // Thêm ingredient khi nhấn Enter
     weightInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             addIngredient();
@@ -40,17 +54,17 @@ function addEventListeners() {
     });
 }
 
-// Thêm nguyên liệu
 function addIngredient() {
     const selectedIndex = ingredientSelect.value;
     const weight = parseFloat(weightInput.value);
     
-    if (!selectedIndex || !weight || weight <= 0) {
+    if (selectedIndex === '' || isNaN(weight) || weight <= 0) {
         alert('Vui lòng chọn nguyên liệu và nhập khối lượng hợp lệ!');
         return;
     }
     
-    const ingredient = ingredientsData.FoundationFoods[selectedIndex];
+    const ingredient = ingredientsData[selectedIndex];
+    // calories per 100g * weight /100, làm tròn 1 chữ số thập phân
     const calories = Math.round((ingredient.calories * weight) / 100 * 10) / 10;
     
     const ingredientItem = {
@@ -66,35 +80,29 @@ function addIngredient() {
     resetForm();
 }
 
-// Reset form
 function resetForm() {
     ingredientSelect.value = '';
     weightInput.value = '';
 }
 
-// Xóa nguyên liệu
 function removeIngredient(id) {
     selectedIngredients = selectedIngredients.filter(item => item.id !== id);
     updateDisplay();
 }
 
-// Xóa tất cả nguyên liệu
 function clearAllIngredients() {
     if (selectedIngredients.length === 0) return;
-    
     if (confirm('Bạn có chắc chắn muốn xóa tất cả nguyên liệu?')) {
         selectedIngredients = [];
         updateDisplay();
     }
 }
 
-// Cập nhật hiển thị
 function updateDisplay() {
     updateIngredientsList();
     updateTotalCalories();
 }
 
-// Cập nhật danh sách nguyên liệu
 function updateIngredientsList() {
     if (selectedIngredients.length === 0) {
         selectedIngredientsDiv.innerHTML = '<p class="empty-state">Chưa có nguyên liệu nào được thêm</p>';
@@ -115,11 +123,9 @@ function updateIngredientsList() {
     selectedIngredientsDiv.innerHTML = ingredientsHTML;
 }
 
-// Cập nhật tổng calories
 function updateTotalCalories() {
     totalCalories = selectedIngredients.reduce((sum, item) => sum + item.totalCalories, 0);
     totalCaloriesSpan.textContent = Math.round(totalCalories * 10) / 10;
 }
 
-// Chạy ứng dụng khi DOM đã sẵn sàng
 document.addEventListener('DOMContentLoaded', initApp);
