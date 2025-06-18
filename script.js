@@ -1,8 +1,8 @@
-const ingredientsData = {"data.json"};
-
+let ingredientsData = {};
 let selectedIngredients = [];
 let totalCalories = 0;
 
+// DOM Elements
 const ingredientSelect = document.getElementById('ingredient-select');
 const weightInput = document.getElementById('weight-input');
 const addIngredientBtn = document.getElementById('add-ingredient');
@@ -10,12 +10,26 @@ const selectedIngredientsDiv = document.getElementById('selected-ingredients');
 const totalCaloriesSpan = document.getElementById('total-calories');
 const clearAllBtn = document.getElementById('clear-all');
 
+// Tải dữ liệu từ file JSON và khởi tạo app
+fetch('data.json')
+  .then(response => response.json())
+  .then(data => {
+    ingredientsData = data;
+    initApp();
+  })
+  .catch(error => {
+    console.error('Lỗi khi tải data.json:', error);
+    alert('Không thể tải danh sách nguyên liệu.');
+  });
+
+// Khởi tạo ứng dụng
 function initApp() {
   populateIngredientSelect();
   addEventListeners();
   updateDisplay();
 }
 
+// Điền dữ liệu vào dropdown
 function populateIngredientSelect() {
   ingredientsData.FoundationFoods.forEach((ingredient, index) => {
     const option = document.createElement('option');
@@ -25,9 +39,11 @@ function populateIngredientSelect() {
   });
 }
 
+// Gắn sự kiện
 function addEventListeners() {
   addIngredientBtn.addEventListener('click', addIngredient);
   clearAllBtn.addEventListener('click', clearAllIngredients);
+  
   weightInput.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
       addIngredient();
@@ -35,6 +51,7 @@ function addEventListeners() {
   });
 }
 
+// Thêm nguyên liệu vào danh sách
 function addIngredient() {
   const selectedIndex = ingredientSelect.value;
   const weight = parseFloat(weightInput.value);
@@ -60,16 +77,19 @@ function addIngredient() {
   resetForm();
 }
 
+// Reset form nhập liệu
 function resetForm() {
   ingredientSelect.value = '';
   weightInput.value = '';
 }
 
+// Xoá một nguyên liệu khỏi danh sách
 function removeIngredient(id) {
   selectedIngredients = selectedIngredients.filter(item => item.id !== id);
   updateDisplay();
 }
 
+// Xoá toàn bộ nguyên liệu
 function clearAllIngredients() {
   if (selectedIngredients.length === 0) return;
 
@@ -79,11 +99,13 @@ function clearAllIngredients() {
   }
 }
 
+// Cập nhật hiển thị
 function updateDisplay() {
   updateIngredientsList();
   updateTotalCalories();
 }
 
+// Hiển thị danh sách nguyên liệu đã chọn
 function updateIngredientsList() {
   if (selectedIngredients.length === 0) {
     selectedIngredientsDiv.innerHTML = '<p class="empty-state">Chưa có nguyên liệu nào được thêm</p>';
@@ -104,9 +126,8 @@ function updateIngredientsList() {
   selectedIngredientsDiv.innerHTML = ingredientsHTML;
 }
 
+// Cập nhật tổng số calories
 function updateTotalCalories() {
   totalCalories = selectedIngredients.reduce((sum, item) => sum + item.totalCalories, 0);
   totalCaloriesSpan.textContent = Math.round(totalCalories * 10) / 10;
 }
-
-document.addEventListener('DOMContentLoaded', initApp);
