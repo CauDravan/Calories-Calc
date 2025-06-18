@@ -1,4 +1,4 @@
-const ingredientsData = "https://raw.githubusercontent.com/CauDravan/Calories-calc/refs/heads/main/data.json"
+const ingredientsData = "https://raw.githubusercontent.com/CauDravan/Calories-calc/main/data.json";
 let selectedIngredients = [];
 let totalCalories = 0;
 
