@@ -2,56 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>🍔 Tính Calories Nguyên Liệu</title>
+  <title>Tính Calories Nguyên Liệu</title>
 </head>
 <body>
   <h1>Tính Calories theo nguyên liệu</h1>
 
-  <input type="file" id="fileInput" accept=".json">
-  <br><br>
-
   <label for="foodSelect">Chọn nguyên liệu:</label>
   <select id="foodSelect">
-    <option value="">-- Chọn ở đây --</option>
+    <option value="">-- Hãy chọn --</option>
   </select>
 
   <p id="caloriesDisplay">Calories: -</p>
 
   <script>
+    const foodSelect = document.getElementById("foodSelect");
+    const caloriesDisplay = document.getElementById("caloriesDisplay");
     let foodData = [];
 
-    document.getElementById('fileInput').addEventListener('change', function(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+    // link data.json
+    const jsonURL = "https://CauDravan.github.io/Calories-calc/data.json";
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const content = JSON.parse(e.target.result);
-        foodData = content.FoundationFoods;
+    fetch(jsonURL)
+      .then(response => response.json())
+      .then(data => {
+        foodData = data.FoundationFoods;
 
-        const select = document.getElementById('foodSelect');
         foodData.forEach((item, index) => {
-          const option = document.createElement('option');
+          const option = document.createElement("option");
           option.value = index;
           option.textContent = item.description;
-          select.appendChild(option);
+          foodSelect.appendChild(option);
         });
-      };
-      reader.readAsText(file);
-    });
+      })
+      .catch(error => {
+        console.error("Không thể tải JSON:", error);
+        caloriesDisplay.textContent = "Không thể tải dữ liệu.";
+      });
 
-    document.getElementById('foodSelect').addEventListener('change', function(event) {
-      const index = event.target.value;
+    foodSelect.addEventListener("change", () => {
+      const index = foodSelect.value;
       const item = foodData[index];
-
       if (!item) return;
 
       const energy = item.foodNutrients.find(nutrient =>
-        nutrient.nutrient?.name === "Energy"
+        nutrient.nutrient?.name?.toLowerCase() === "energy"
       );
 
       const calories = energy ? energy.amount : "Không rõ";
-      document.getElementById('caloriesDisplay').textContent = "Calories: " + calories + " kcal / 100g";
+      caloriesDisplay.textContent = "Calories: " + calories + " kcal / 100g";
     });
   </script>
 </body>
