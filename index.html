@@ -1,181 +1,820 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Tính Calories Nguyên Liệu</title>
-  <style>
-    table, th, td {
-      border: 1px solid black;
-      border-collapse: collapse;
-      padding: 6px;
-    }
-    input[type="text"] {
-      width: 300px;
-      padding: 5px;
-    }
-    .suggestions {
-      border: 1px solid #ccc;
-      border-top: none;
-      max-height: 150px;
-      overflow-y: auto;
-      width: 312px;
-      position: absolute;
-      background: white;
-      z-index: 10;
-    }
-    .suggestion-item {
-      padding: 6px;
-      cursor: pointer;
-    }
-    .suggestion-item:hover {
-      background-color: #eee;
-    }
-    button.delete-btn {
-      color: red;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máy Tính Calories</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Tính Calories theo nguyên liệu</h1>
+    <div class="container">
+        <header>
+            <h1>🍽️ Máy Tính Calories</h1>
+            <p>Tính toán lượng calories trong món ăn của bạn</p>
+        </header>
 
-  <label for="foodInput">Nhập nguyên liệu:</label><br>
-  <div style="position: relative;">
-    <input type="text" id="foodInput" placeholder="vd: trứng, gạo, thịt...">
-    <div id="suggestions" class="suggestions" style="display:none;"></div>
-  </div>
+        <div class="calculator-section">
+            <div class="input-section">
+                <h2>Thêm nguyên liệu</h2>
+                <div class="ingredient-form">
+                    <div class="form-group">
+                        <label for="ingredient-select">Chọn nguyên liệu:</label>
+                        <select id="ingredient-select">
+                            <option value="">-- Chọn nguyên liệu --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="weight-input">Khối lượng (gram):</label>
+                        <input type="number" id="weight-input" min="1" step="0.1" placeholder="100">
+                    </div>
+                    
+                    <button id="add-ingredient" class="btn-primary">Thêm nguyên liệu</button>
+                </div>
+            </div>
 
-  <br>
-  <label for="gramsInput">Số gram:</label>
-  <input type="number" id="gramsInput" placeholder="vd: 100" min="1">
+            <div class="results-section">
+                <div class="total-calories">
+                    <h2>Tổng Calories</h2>
+                    <div class="calorie-display">
+                        <span id="total-calories">0</span>
+                        <span class="unit">kcal</span>
+                    </div>
+                </div>
 
-  <button id="addButton">Thêm</button>
+                <div class="ingredients-list">
+                    <h3>Danh sách nguyên liệu</h3>
+                    <div id="selected-ingredients">
+                        <p class="empty-state">Chưa có nguyên liệu nào được thêm</p>
+                    </div>
+                    <button id="clear-all" class="btn-secondary">Xóa tất cả</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <h2>Danh sách nguyên liệu đã thêm:</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Nguyên liệu</th>
-        <th>Gram</th>
-        <th>Calories / 100g</th>
-        <th>Tổng Calories</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody id="ingredientsTableBody"></tbody>
-  </table>
-
-  <h3 id="totalCaloriesDisplay">Tổng calories: 0 kcal</h3>
-
-  <script>
-    const jsonURL = "https://CauDravan.github.io/Calories-calc/simplified_data.json";
-
-    const foodInput = document.getElementById("foodInput");
-    const gramsInput = document.getElementById("gramsInput");
-    const addButton = document.getElementById("addButton");
-    const tableBody = document.getElementById("ingredientsTableBody");
-    const totalCaloriesDisplay = document.getElementById("totalCaloriesDisplay");
-    const suggestionsBox = document.getElementById("suggestions");
-
-    let foodData = [];
-    let totalCalories = 0;
-
-    fetch(jsonURL)
-      .then(response => response.json())
-      .then(data => {
-        foodData = data.FoundationFoods;
-      })
-      .catch(error => {
-        console.error("Không thể tải dữ liệu:", error);
-        totalCaloriesDisplay.textContent = "Không thể tải dữ liệu.";
-      });
-
-    // Gợi ý tìm kiếm
-    foodInput.addEventListener("input", () => {
-      const query = foodInput.value.trim().toLowerCase();
-      suggestionsBox.innerHTML = "";
-      if (!query) {
-        suggestionsBox.style.display = "none";
-        return;
-      }
-
-      const matches = foodData.filter(food =>
-        food.description.toLowerCase().includes(query)
-      ).slice(0, 10); // giới hạn 10 gợi ý
-
-      if (matches.length === 0) {
-        suggestionsBox.style.display = "none";
-        return;
-      }
-
-      matches.forEach(food => {
-        const div = document.createElement("div");
-        div.className = "suggestion-item";
-        div.textContent = food.description;
-        div.addEventListener("click", () => {
-          foodInput.value = food.description;
-          suggestionsBox.style.display = "none";
-        });
-        suggestionsBox.appendChild(div);
-      });
-
-      suggestionsBox.style.display = "block";
-    });
-
-    // Ẩn gợi ý khi click ngoài
-    document.addEventListener("click", (e) => {
-      if (!foodInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-        suggestionsBox.style.display = "none";
-      }
-    });
-
-    addButton.addEventListener("click", () => {
-      const foodName = foodInput.value.trim();
-      const grams = parseFloat(gramsInput.value);
-
-      if (!foodName || isNaN(grams) || grams <= 0) {
-        alert("Vui lòng nhập nguyên liệu và số gram hợp lệ.");
-        return;
-      }
-
-      const item = foodData.find(food => food.description.toLowerCase() === foodName.toLowerCase());
-      if (!item) {
-        alert("Không tìm thấy nguyên liệu.");
-        return;
-      }
-
-      const caloriesPer100g = item.calories || 0;
-      const itemCalories = (caloriesPer100g * grams) / 100;
-      totalCalories += itemCalories;
-
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${item.description}</td>
-        <td>${grams}g</td>
-        <td>${caloriesPer100g}</td>
-        <td class="itemCalories">${itemCalories.toFixed(2)}</td>
-        <td><button class="delete-btn">Xóa</button></td>
-      `;
-
-      row.querySelector(".delete-btn").addEventListener("click", () => {
-        const cal = parseFloat(row.querySelector(".itemCalories").textContent);
-        totalCalories -= cal;
-        row.remove();
-        updateTotalCalories();
-      });
-
-      tableBody.appendChild(row);
-      updateTotalCalories();
-
-      // Reset
-      foodInput.value = "";
-      gramsInput.value = "";
-      suggestionsBox.style.display = "none";
-    });
-
-    function updateTotalCalories() {
-      totalCaloriesDisplay.textContent = "Tổng calories: " + totalCalories.toFixed(2) + " kcal";
-    }
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.calculator-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 40px;
+}
+
+.input-section, .results-section {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.input-section h2, .results-section h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-group select, .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group select:focus, .form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-primary, .btn-secondary {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    margin-top: 20px;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.total-calories {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.calorie-display {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+}
+
+.unit {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin-left: 10px;
+}
+
+.ingredients-list h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.ingredient-item {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.ingredient-item:hover {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+.ingredient-info {
+    flex: 1;
+}
+
+.ingredient-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.ingredient-details {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.ingredient-calories {
+    font-weight: 700;
+    color: #11998e;
+    font-size: 1.1rem;
+}
+
+.remove-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: 10px;
+    transition: background 0.3s ease;
+}
+
+.remove-btn:hover {
+    background: #c82333;
+}
+
+.empty-state {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .calculator-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .calorie-display {
+        font-size: 2rem;
+        padding: 20px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ingredient-item {
+    animation: fadeIn 0.3s ease;
+}
+</style>
+
+<script>
+// Dữ liệu nguyên liệu từ JSON
+const ingredientsData = {
+  "FoundationFoods": [
+    {
+      "description": "Hummus, commercial",
+      "calories": 229
+    },
+    {
+      "description": "Tomatoes, grape, raw",
+      "calories": 27.0
+    },
+    {
+      "description": "Beans, snap, green, canned, regular pack, drained solids",
+      "calories": 21.0
+    },
+    {
+      "description": "Frankfurter, beef, unheated",
+      "calories": 314
+    },
+    {
+      "description": "Nuts, almonds, dry roasted, with salt added",
+      "calories": 620
+    },
+    {
+      "description": "Kale, raw",
+      "calories": 35.0
+    },
+    {
+      "description": "Egg, whole, raw, frozen, pasteurized",
+      "calories": 150
+    },
+    {
+      "description": "Egg, white, raw, frozen, pasteurized",
+      "calories": 48.0
+    },
+    {
+      "description": "Egg, white, dried",
+      "calories": 376
+    },
+    {
+      "description": "Onion rings, breaded, par fried, frozen, prepared, heated in oven",
+      "calories": 288
+    },
+    {
+      "description": "Pickles, cucumber, dill or kosher dill",
+      "calories": 12.0
+    },
+    {
+      "description": "Cheese, parmesan, grated",
+      "calories": 421
+    },
+    {
+      "description": "Cheese, pasteurized process, American, vitamin D fortified",
+      "calories": 366
+    },
+    {
+      "description": "Grapefruit juice, white, canned or bottled, unsweetened",
+      "calories": 37.0
+    },
+    {
+      "description": "Peaches, yellow, raw",
+      "calories": 42.0
+    },
+    {
+      "description": "Seeds, sunflower seed kernels, dry roasted, with salt added",
+      "calories": 612
+    },
+    {
+      "description": "Bread, white, commercially prepared",
+      "calories": 270
+    },
+    {
+      "description": "Kale, frozen, cooked, boiled, drained, without salt",
+      "calories": 36.0
+    },
+    {
+      "description": "Mustard, prepared, yellow",
+      "calories": 61.0
+    },
+    {
+      "description": "Kiwifruit, green, raw",
+      "calories": 58.0
+    },
+    {
+      "description": "Nectarines, raw",
+      "calories": 39.0
+    },
+    {
+      "description": "Cheese, cheddar",
+      "calories": 408
+    },
+    {
+      "description": "Cheese, cottage, lowfat, 2% milkfat",
+      "calories": 84.0
+    },
+    {
+      "description": "Cheese, mozzarella, low moisture, part-skim",
+      "calories": 298
+    },
+    {
+      "description": "Egg, whole, dried",
+      "calories": 575
+    },
+    {
+      "description": "Egg, yolk, raw, frozen, pasteurized",
+      "calories": 296
+    },
+    {
+      "description": "Egg, yolk, dried",
+      "calories": 654
+    },
+    {
+      "description": "Yogurt, Greek, plain, nonfat",
+      "calories": 61.0
+    },
+    {
+      "description": "Yogurt, Greek, strawberry, nonfat",
+      "calories": 83.0
+    },
+    {
+      "description": "Oil, coconut",
+      "calories": 833
+    },
+    {
+      "description": "Chicken, broilers or fryers, drumstick, meat only, cooked, braised",
+      "calories": 156
+    },
+    {
+      "description": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised",
+      "calories": 166
+    },
+    {
+      "description": "Sauce, pasta, spaghetti/marinara, ready-to-serve",
+      "calories": 45.0
+    },
+    {
+      "description": "Ham, sliced, pre-packaged, deli meat (96%fat free, water added)",
+      "calories": 106
+    },
+    {
+      "description": "Olives, green, Manzanilla, stuffed with pimiento",
+      "calories": 130
+    },
+    {
+      "description": "Cookies, oatmeal, soft, with raisins",
+      "calories": 430
+    },
+    {
+      "description": "Tomatoes, canned, red, ripe, diced",
+      "calories": 18.0
+    },
+    {
+      "description": "Fish, haddock, raw",
+      "calories": 74.0
+    },
+    {
+      "description": "Fish, pollock, raw",
+      "calories": 56.0
+    },
+    {
+      "description": "Fish, tuna, light, canned in water, drained solids",
+      "calories": 90.0
+    },
+    {
+      "description": "Restaurant, Chinese, fried rice, without meat",
+      "calories": 174
+    },
+    {
+      "description": "Restaurant, Latino, tamale, pork",
+      "calories": 174
+    },
+    {
+      "description": "Restaurant, Latino, pupusas con frijoles (pupusas, bean)",
+      "calories": 229
+    },
+    {
+      "description": "Bread, whole-wheat, commercially prepared",
+      "calories": 254
+    },
+    {
+      "description": "Beef, loin, tenderloin roast, separable lean only, boneless, trimmed to 0\" fat, select, cooked, roasted",
+      "calories": 176
+    },
+    {
+      "description": "Beef, loin, top loin steak, boneless, lip-on, separable lean only, trimmed to 1/8\" fat, choice, raw",
+      "calories": 155
+    },
+    {
+      "description": "Beef, round, eye of round roast, boneless, separable lean only, trimmed to 0\" fat, select, raw",
+      "calories": 122
+    },
+    {
+      "description": "Beef, round, top round roast, boneless, separable lean only, trimmed to 0\" fat, select, raw",
+      "calories": 123
+    },
+    {
+      "description": "Beef, short loin, porterhouse steak, separable lean only, trimmed to 1/8\" fat, select, raw",
+      "calories": 145
+    },
+    {
+      "description": "Beef, short loin, t-bone steak, bone-in, separable lean only, trimmed to 1/8\" fat, choice, cooked, grilled",
+      "calories": 219
+    },
+    {
+      "description": "Carrots, frozen, unprepared",
+      "calories": 37.0
+    },
+    {
+      "description": "Cheese, dry white, queso seco",
+      "calories": 326
+    },
+    {
+      "description": "Cheese, ricotta, whole milk",
+      "calories": 157
+    },
+    {
+      "description": "Cheese, swiss",
+      "calories": 393
+    },
+    {
+      "description": "Figs, dried, uncooked",
+      "calories": 249
+    },
+    {
+      "description": "Lettuce, cos or romaine, raw",
+      "calories": 17.0
+    },
+    {
+      "description": "Melons, cantaloupe, raw",
+      "calories": 34.0
+    },
+    {
+      "description": "Oranges, raw, navels",
+      "calories": 47.0
+    },
+    {
+      "description": "Milk, lowfat, fluid, 1% milkfat, with added vitamin A and vitamin D",
+      "calories": 43.0
+    },
+    {
+      "description": "Pears, raw, bartlett",
+      "calories": 57.0
+    },
+    {
+      "description": "Restaurant, Chinese, sweet and sour pork",
+      "calories": 260
+    },
+    {
+      "description": "Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)",
+      "calories": 34.0
+    },
+    {
+      "description": "Sauce, salsa, ready-to-serve",
+      "calories": 29.0
+    },
+    {
+      "description": "Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D",
+      "calories": 50.0
+    },
+    {
+      "description": "Sausage, breakfast sausage, beef, pre-cooked, unprepared",
+      "calories": 328
+    },
+    {
+      "description": "Sausage, Italian, pork, mild, cooked, pan-fried",
+      "calories": 322
+    },
+    {
+      "description": "Sausage, pork, chorizo, link or ground, cooked, pan-fried",
+      "calories": 346
+    },
+    {
+      "description": "Milk, whole, 3.25% milkfat, with added vitamin D",
+      "calories": 60.0
+    },
+    {
+      "description": "Sausage, turkey, breakfast links, mild, raw",
+      "calories": 169
+    },
+    {
+      "description": "Sugars, granulated",
+      "calories": 385
+    },
+    {
+      "description": "Turkey, ground, 93% lean, 7% fat, pan-broiled crumbles",
+      "calories": 220
+    },
+    {
+      "description": "Ham, sliced, restaurant",
+      "calories": 121
+    },
+    {
+      "description": "Cheese, American, restaurant",
+      "calories": 375
+    },
+    {
+      "description": "Broccoli, raw",
+      "calories": 31.0
+    },
+    {
+      "description": "Ketchup, restaurant",
+      "calories": 117
+    },
+    {
+      "description": "Eggs, Grade A, Large, egg white",
+      "calories": 55.0
+    },
+    {
+      "description": "Eggs, Grade A, Large, egg yolk",
+      "calories": 334
+    },
+    {
+      "description": "Eggs, Grade A, Large, egg whole",
+      "calories": 148
+    },
+    {
+      "description": "Pork, cured, bacon, cooked, restaurant",
+      "calories": 500
+    },
+    {
+      "description": "Flour, wheat, all-purpose, enriched, bleached",
+      "calories": 366
+    },
+    {
+      "description": "Flour, wheat, all-purpose, enriched, unbleached",
+      "calories": 358
+    },
+    {
+      "description": "Flour, wheat, all-purpose, unenriched, unbleached",
+      "calories": 362
+    },
+    {
+      "description": "Flour, whole wheat, unenriched",
+      "calories": 370
+    },
+    {
+      "description": "Flour, bread, white, enriched, unbleached",
+      "calories": 363
+    },
+    {
+      "description": "Flour, rice, white, unenriched",
+      "calories": 359
+    },
+    {
+      "description": "Flour, corn, yellow, fine meal, enriched",
+      "calories": 364
+    },
+    {
+      "description": "Onions, red, raw",
+      "calories": 44.0
+    },
+    {
+      "description": "Onions, yellow, raw",
+      "calories": 38.0
+    },
+    {
+      "description": "Garlic, raw",
+      "calories": 143
+    },
+    {
+      "description": "Flour, soy, defatted",
+      "calories": 366
+    },
+    {
+      "description": "Flour, soy, full-fat",
+      "calories": 452
+    },
+    {
+      "description": "Flour, rice, brown",
+      "calories": 365
+    },
+    {
+      "description": "Flour, rice, glutinous",
+      "calories": 358
+    },
+    {
+      "description": "Flour, pastry, unenriched, unbleached",
+      "calories": 358
+    },
+    {
+      "description": "Onions, white, raw",
+      "calories": 35.0
+    },
+    {
+      "description": "Bananas, overripe, raw",
+      "calories": 85.0
+    },
+    {
+      "description": "Bananas, ripe and slightly ripe, raw",
+      "calories": 97.0
+    }
+  ]
+};
+
+// Biến toàn cục
+let selectedIngredients = [];
+let totalCalories = 0;
+
+// DOM Elements
+const ingredientSelect = document.getElementById('ingredient-select');
+const weightInput = document.getElementById('weight-input');
+const addIngredientBtn = document.getElementById('add-ingredient');
+const selectedIngredientsDiv = document.getElementById('selected-ingredients');
+const totalCaloriesSpan = document.getElementById('total-calories');
+const clearAllBtn = document.getElementById('clear-all');
+
+// Khởi tạo ứng dụng
+function initApp() {
+    populateIngredientSelect();
+    addEventListeners();
+    updateDisplay();
+}
+
+// Điền dữ liệu vào select
+function populateIngredientSelect() {
+    ingredientsData.FoundationFoods.forEach((ingredient, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = ingredient.description;
+        ingredientSelect.appendChild(option);
+    });
+}
+
+// Thêm event listeners
+function addEventListeners() {
+    addIngredientBtn.addEventListener('click', addIngredient);
+    clearAllBtn.addEventListener('click', clearAllIngredients);
+    
+    // Thêm ingredient khi nhấn Enter
+    weightInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addIngredient();
+        }
+    });
+}
+
+// Thêm nguyên liệu
+function addIngredient() {
+    const selectedIndex = ingredientSelect.value;
+    const weight = parseFloat(weightInput.value);
+    
+    if (!selectedIndex || !weight || weight <= 0) {
+        alert('Vui lòng chọn nguyên liệu và nhập khối lượng hợp lệ!');
+        return;
+    }
+    
+    const ingredient = ingredientsData.FoundationFoods[selectedIndex];
+    const calories = Math.round((ingredient.calories * weight) / 100 * 10) / 10;
+    
+    const ingredientItem = {
+        id: Date.now(),
+        name: ingredient.description,
+        weight: weight,
+        caloriesPer100g: ingredient.calories,
+        totalCalories: calories
+    };
+    
+    selectedIngredients.push(ingredientItem);
+    updateDisplay();
+    resetForm();
+}
+
+// Reset form
+function resetForm() {
+    ingredientSelect.value = '';
+    weightInput.value = '';
+}
+
+// Xóa nguyên liệu
+function removeIngredient(id) {
+    selectedIngredients = selectedIngredients.filter(item => item.id !== id);
+    updateDisplay();
+}
+
+// Xóa tất cả nguyên liệu
+function clearAllIngredients() {
+    if (selectedIngredients.length === 0) return;
+    
+    if (confirm('Bạn có chắc chắn muốn xóa tất cả nguyên liệu?')) {
+        selectedIngredients = [];
+        updateDisplay();
+    }
+}
+
+// Cập nhật hiển thị
+function updateDisplay() {
+    updateIngredientsList();
+    updateTotalCalories();
+}
+
+// Cập nhật danh sách nguyên liệu
+function updateIngredientsList() {
+    if (selectedIngredients.length === 0) {
+        selectedIngredientsDiv.innerHTML = '<p class="empty-state">Chưa có nguyên liệu nào được thêm</p>';
+        return;
+    }
+    
+    const ingredientsHTML = selectedIngredients.map(item => `
+        <div class="ingredient-item">
+            <div class="ingredient-info">
+                <div class="ingredient-name">${item.name}</div>
+                <div class="ingredient-details">${item.weight}g • ${item.caloriesPer100g} kcal/100g</div>
+            </div>
+            <div class="ingredient-calories">${item.totalCalories} kcal</div>
+            <button class="remove-btn" onclick="removeIngredient(${item.id})">Xóa</button>
+        </div>
+    `).join('');
+    
+    selectedIngredientsDiv.innerHTML = ingredientsHTML;
+}
+
+// Cập nhật tổng calories
+function updateTotalCalories() {
+    totalCalories = selectedIngredients.reduce((sum, item) => sum + item.totalCalories, 0);
+    totalCaloriesSpan.textContent = Math.round(totalCalories * 10) / 10;
+}
+
+// Chạy ứng dụng khi DOM đã sẵn sàng
+document.addEventListener('DOMContentLoaded', initApp);
+</script>
