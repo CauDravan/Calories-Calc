@@ -1,8 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <title>Tính Calories Nguyên Liệu</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 6px;
+    }
+  </style>
 </head>
 <body>
   <h1>Tính Calories theo nguyên liệu</h1>
@@ -12,21 +19,42 @@
     <option value="">-- Hãy chọn --</option>
   </select>
 
-  <p id="caloriesDisplay">Calories: -</p>
+  <label for="gramsInput">Số gram:</label>
+  <input type="number" id="gramsInput" placeholder="vd: 100" min="1">
+
+  <button id="addButton">Thêm</button>
+
+  <h2>Danh sách nguyên liệu đã thêm:</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nguyên liệu</th>
+        <th>Gram</th>
+        <th>Calories / 100g</th>
+        <th>Tổng Calories</th>
+      </tr>
+    </thead>
+    <tbody id="ingredientsTableBody">
+    </tbody>
+  </table>
+
+  <h3 id="totalCaloriesDisplay">Tổng calories: 0 kcal</h3>
 
   <script>
-    const foodSelect = document.getElementById("foodSelect");
-    const caloriesDisplay = document.getElementById("caloriesDisplay");
-    let foodData = [];
-
-    // link data.json
     const jsonURL = "https://CauDravan.github.io/Calories-calc/data.json";
+    const foodSelect = document.getElementById("foodSelect");
+    const gramsInput = document.getElementById("gramsInput");
+    const addButton = document.getElementById("addButton");
+    const tableBody = document.getElementById("ingredientsTableBody");
+    const totalCaloriesDisplay = document.getElementById("totalCaloriesDisplay");
+
+    let foodData = [];
+    let totalCalories = 0;
 
     fetch(jsonURL)
       .then(response => response.json())
       .then(data => {
         foodData = data.FoundationFoods;
-
         foodData.forEach((item, index) => {
           const option = document.createElement("option");
           option.value = index;
@@ -36,20 +64,42 @@
       })
       .catch(error => {
         console.error("Không thể tải JSON:", error);
-        caloriesDisplay.textContent = "Không thể tải dữ liệu.";
+        totalCaloriesDisplay.textContent = "Không thể tải dữ liệu.";
       });
 
-    foodSelect.addEventListener("change", () => {
+    addButton.addEventListener("click", () => {
       const index = foodSelect.value;
+      const grams = parseFloat(gramsInput.value);
       const item = foodData[index];
-      if (!item) return;
+
+      if (!item || isNaN(grams) || grams <= 0) {
+        alert("Vui lòng chọn nguyên liệu và nhập số gram hợp lệ.");
+        return;
+      }
 
       const energy = item.foodNutrients.find(nutrient =>
         nutrient.nutrient?.name?.toLowerCase() === "energy"
       );
 
-      const calories = energy ? energy.amount : "Không rõ";
-      caloriesDisplay.textContent = "Calories: " + calories + " kcal / 100g";
+      const caloriesPer100g = energy ? energy.amount : 0;
+      const itemCalories = (caloriesPer100g * grams) / 100;
+
+      totalCalories += itemCalories;
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${item.description}</td>
+        <td>${grams}g</td>
+        <td>${caloriesPer100g}</td>
+        <td>${itemCalories.toFixed(2)}</td>
+      `;
+      tableBody.appendChild(row);
+
+      totalCaloriesDisplay.textContent = "Tổng calories: " + totalCalories.toFixed(2) + " kcal";
+
+      // Reset input
+      gramsInput.value = "";
+      foodSelect.value = "";
     });
   </script>
 </body>
