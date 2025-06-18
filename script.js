@@ -1,3 +1,4 @@
+const ingredientsData = "data.json"
 let selectedIngredients = [];
 let totalCalories = 0;
 
