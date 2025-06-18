@@ -9,15 +9,21 @@
       border-collapse: collapse;
       padding: 6px;
     }
+    input[type="text"] {
+      width: 300px;
+    }
+    button.delete-btn {
+      color: red;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h1>Tính Calories theo nguyên liệu</h1>
 
-  <label for="foodSelect">Chọn nguyên liệu:</label>
-  <select id="foodSelect">
-    <option value="">-- Hãy chọn --</option>
-  </select>
+  <label for="foodInput">Nhập nguyên liệu:</label>
+  <input type="text" id="foodInput" list="foodList" placeholder="vd: gạo, trứng, thịt gà">
+  <datalist id="foodList"></datalist>
 
   <label for="gramsInput">Số gram:</label>
   <input type="number" id="gramsInput" placeholder="vd: 100" min="1">
@@ -32,6 +38,7 @@
         <th>Gram</th>
         <th>Calories / 100g</th>
         <th>Tổng Calories</th>
+        <th>Hành động</th>
       </tr>
     </thead>
     <tbody id="ingredientsTableBody">
@@ -41,10 +48,12 @@
   <h3 id="totalCaloriesDisplay">Tổng calories: 0 kcal</h3>
 
   <script>
-    const jsonURL = "https://CauDravan.github.io/Calories-calc/data.json";
-    const foodSelect = document.getElementById("foodSelect");
+    const jsonURL = "https://CauDravan.github.io/Calories-calc/simplified_data.json";
+
+    const foodInput = document.getElementById("foodInput");
     const gramsInput = document.getElementById("gramsInput");
     const addButton = document.getElementById("addButton");
+    const foodList = document.getElementById("foodList");
     const tableBody = document.getElementById("ingredientsTableBody");
     const totalCaloriesDisplay = document.getElementById("totalCaloriesDisplay");
 
@@ -55,52 +64,66 @@
       .then(response => response.json())
       .then(data => {
         foodData = data.FoundationFoods;
-        foodData.forEach((item, index) => {
+
+        foodData.forEach(item => {
           const option = document.createElement("option");
-          option.value = index;
-          option.textContent = item.description;
-          foodSelect.appendChild(option);
+          option.value = item.description;
+          foodList.appendChild(option);
         });
       })
       .catch(error => {
-        console.error("Không thể tải JSON:", error);
+        console.error("Không thể tải dữ liệu:", error);
         totalCaloriesDisplay.textContent = "Không thể tải dữ liệu.";
       });
 
     addButton.addEventListener("click", () => {
-      const index = foodSelect.value;
+      const foodName = foodInput.value.trim();
       const grams = parseFloat(gramsInput.value);
-      const item = foodData[index];
 
-      if (!item || isNaN(grams) || grams <= 0) {
-        alert("Vui lòng chọn nguyên liệu và nhập số gram hợp lệ.");
+      if (!foodName || isNaN(grams) || grams <= 0) {
+        alert("Vui lòng nhập nguyên liệu và số gram hợp lệ.");
         return;
       }
 
-      const energy = item.foodNutrients.find(nutrient =>
-        nutrient.nutrient?.name?.toLowerCase() === "energy"
-      );
+      const item = foodData.find(food => food.description.toLowerCase() === foodName.toLowerCase());
+      if (!item) {
+        alert("Không tìm thấy nguyên liệu.");
+        return;
+      }
 
-      const caloriesPer100g = energy ? energy.amount : 0;
+      const caloriesPer100g = item.calories || 0;
       const itemCalories = (caloriesPer100g * grams) / 100;
-
       totalCalories += itemCalories;
 
       const row = document.createElement("tr");
+
       row.innerHTML = `
         <td>${item.description}</td>
         <td>${grams}g</td>
         <td>${caloriesPer100g}</td>
-        <td>${itemCalories.toFixed(2)}</td>
+        <td class="itemCalories">${itemCalories.toFixed(2)}</td>
+        <td><button class="delete-btn">Xóa</button></td>
       `;
+
+      // Gắn sự kiện nút xóa
+      row.querySelector(".delete-btn").addEventListener("click", () => {
+        const cal = parseFloat(row.querySelector(".itemCalories").textContent);
+        totalCalories -= cal;
+        row.remove();
+        updateTotalCalories();
+      });
+
       tableBody.appendChild(row);
+      updateTotalCalories();
 
-      totalCaloriesDisplay.textContent = "Tổng calories: " + totalCalories.toFixed(2) + " kcal";
-
-      // Reset input
+      // Reset
+      foodInput.value = "";
       gramsInput.value = "";
-      foodSelect.value = "";
     });
+
+    function updateTotalCalories() {
+      totalCaloriesDisplay.textContent = "Tổng calories: " + totalCalories.toFixed(2) + " kcal";
+    }
   </script>
 </body>
 </html>
