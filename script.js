@@ -62,15 +62,19 @@ function addIngredient() {
   }
 
   const ingredient = ingredientsData.FoundationFoods[selectedIndex];
-  const calories = Math.round((ingredient.calories * weight) / 100 * 10) / 10;
+  const energyNutrient = ingredient.foodNutrients.find(n => n.nutrient?.id === 1008);
+  const caloriesPer100g = energyNutrient ? energyNutrient.amount : 0;
+
+  const calories = Math.round((caloriesPer100g * weight) / 100 * 10) / 10;
 
   const ingredientItem = {
     id: Date.now(),
     name: ingredient.description,
     weight: weight,
-    caloriesPer100g: ingredient.calories,
+    caloriesPer100g: caloriesPer100g,
     totalCalories: calories
   };
+
 
   selectedIngredients.push(ingredientItem);
   updateDisplay();
