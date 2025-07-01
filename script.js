@@ -11,10 +11,11 @@ const totalCaloriesSpan = document.getElementById('total-calories');
 const clearAllBtn = document.getElementById('clear-all');
 
 // Tải dữ liệu từ file JSON và khởi tạo app
-fetch('data.json')
+fetch('./data.json')
   .then(response => response.json())
   .then(data => {
     ingredientsData = data;
+    console.log('Loaded data:', data);
     initApp();
   })
   .catch(error => {
