@@ -18,8 +18,8 @@ fetch('data.json')
     initApp();
   })
   .catch(error => {
-    console.error('Lỗi khi tải data.json:', error);
-    alert('Không thể tải danh sách nguyên liệu.');
+    console.error('Error data.json:', error);
+    alert('Can't download the ingredients');
   });
 
 // Khởi tạo ứng dụng
@@ -57,7 +57,7 @@ function addIngredient() {
   const weight = parseFloat(weightInput.value);
 
   if (!selectedIndex || !weight || weight <= 0) {
-    alert('Vui lòng chọn nguyên liệu và nhập khối lượng hợp lệ!');
+    alert('Please select ingredients and enter valid weight!');
     return;
   }
 
@@ -97,7 +97,7 @@ function removeIngredient(id) {
 function clearAllIngredients() {
   if (selectedIngredients.length === 0) return;
 
-  if (confirm('Bạn có chắc chắn muốn xóa tất cả nguyên liệu?')) {
+  if (confirm('Are you sure about delete all of that?')) {
     selectedIngredients = [];
     updateDisplay();
   }
@@ -112,7 +112,7 @@ function updateDisplay() {
 // Hiển thị danh sách nguyên liệu đã chọn
 function updateIngredientsList() {
   if (selectedIngredients.length === 0) {
-    selectedIngredientsDiv.innerHTML = '<p class="empty-state">Chưa có nguyên liệu nào được thêm</p>';
+    selectedIngredientsDiv.innerHTML = '<p class="empty-state">No ingredients added yet</p>';
     return;
   }
 
