@@ -6,7 +6,7 @@
   <title>Calories Caculator</title>
   <link rel="stylesheet" href="style.css">
 
-  <!-- 🧠 Select2 CSS -->
+  <!-- Select2 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -56,17 +56,20 @@
     </div>
   </div>
 
-  <!-- my script is here -->
+  <!-- script -->
   <script src="script.js"></script>
 
-  <!-- upgrade searching -->
+  <!-- jQuery cho Select2 -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- Select2 -->
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <!-- initialization select 2 -->
+  
+  <!-- Khoi tao Select2 -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const select = document.getElementById("ingredient-select");
       if (select) {
-        // jQuery-style initialization select2
         $(select).select2({
           placeholder: "-- Add --",
           width: "100%"
