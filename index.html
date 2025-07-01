@@ -1,58 +1,78 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calories Caculator</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calories Caculator</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- 🧠 Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🍽️ Calories Caculator</h1>
-            <p>Caculate amount of calories in your dish</p>
-        </header>
+  <div class="container">
+    <header>
+      <h1>🍽️ Calories Caculator</h1>
+      <p>Caculate amount of calories in your dish</p>
+    </header>
 
-        <div class="calculator-section">
-            <div class="input-section">
-                <h2>Add ingredient</h2>
-                <div class="ingredient-form">
-                    <div class="form-group">
-                        <label for="ingredient-select">Add ingredient:</label>
-                        <select id="ingredient-select">
-                            <option value="">-- Add --</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="weight-input">Volume (gram):</label>
-                        <input type="number" id="weight-input" min="1" step="0.1" placeholder="100">
-                    </div>
-                    
-                    <button id="add-ingredient" class="btn-primary">Add ingredient</button>
-                </div>
-            </div>
+    <div class="calculator-section">
+      <div class="input-section">
+        <h2>Add ingredient</h2>
+        <div class="ingredient-form">
+          <div class="form-group">
+            <label for="ingredient-select">Add ingredient:</label>
+            <select id="ingredient-select">
+              <option value="">-- Add --</option>
+            </select>
+          </div>
 
-            <div class="results-section">
-                <div class="total-calories">
-                    <h2>Total Calories</h2>
-                    <div class="calorie-display">
-                        <span id="total-calories">0</span>
-                        <span class="unit">kcal</span>
-                    </div>
-                </div>
+          <div class="form-group">
+            <label for="weight-input">Volume (gram):</label>
+            <input type="number" id="weight-input" min="1" step="0.1" placeholder="100">
+          </div>
 
-                <div class="ingredients-list">
-                    <h3>List of ingredient</h3>
-                    <div id="selected-ingredients">
-                        <p class="empty-state">No ingredients added yet</p>
-                    </div>
-                    <button id="clear-all" class="btn-secondary">Delete all</button>
-                </div>
-            </div>
+          <button id="add-ingredient" class="btn-primary">Add ingredient</button>
         </div>
-    </div>
+      </div>
 
-    <script src="script.js"></script>
+      <div class="results-section">
+        <div class="total-calories">
+          <h2>Total Calories</h2>
+          <div class="calorie-display">
+            <span id="total-calories">0</span>
+            <span class="unit">kcal</span>
+          </div>
+        </div>
+
+        <div class="ingredients-list">
+          <h3>List of ingredient</h3>
+          <div id="selected-ingredients">
+            <p class="empty-state">No ingredients added yet</p>
+          </div>
+          <button id="clear-all" class="btn-secondary">Delete all</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- my script is here -->
+  <script src="script.js"></script>
+
+  <!-- upgrade searching -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- initialization select 2 -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const select = document.getElementById("ingredient-select");
+      if (select) {
+        // jQuery-style initialization select2
+        $(select).select2({
+          placeholder: "-- Add --",
+          width: "100%"
+        });
+      }
+    });
+  </script>
 </body>
 </html>
