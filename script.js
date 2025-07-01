@@ -20,7 +20,7 @@ fetch('./data.json')
   })
   .catch(error => {
     console.error('Error data.json:', error);
-    alert('Can't download the ingredients');
+    alert('Cant download the ingredients');
   });
 
 // Khởi tạo ứng dụng
