@@ -58,21 +58,26 @@ function addIngredient() {
   const weight = parseFloat(weightInput.value);
 
   if (selectedIndex === "" || isNaN(weight) || weight <= 0) {
-    alert('Please select ingredients and enter valid weight!');
+    alert('Please select an ingredient and enter a valid weight!');
     return;
   }
 
   const ingredient = ingredientsData.FoundationFoods[selectedIndex];
-  const energyNutrient = ingredient.foodNutrients.find(n => n.nutrient?.id === 1008);
-  const caloriesPer100g = energyNutrient ? energyNutrient.amount : 0;
-  const calories = Math.round((caloriesPer100g * weight) / 100 * 10) / 10;
+  const caloriesPer100g = ingredient.calories ?? 0; // <- dùng trực tiếp "calories" từ JSON
+
+  if (caloriesPer100g <= 0) {
+    alert(`No calorie data found for ${ingredient.description}`);
+    return;
+  }
+
+  const totalCalories = Math.round((caloriesPer100g * weight) / 100 * 10) / 10;
 
   const ingredientItem = {
     id: Date.now(),
     name: ingredient.description,
     weight: weight,
     caloriesPer100g: caloriesPer100g,
-    totalCalories: calories
+    totalCalories: totalCalories
   };
 
   selectedIngredients.push(ingredientItem);
