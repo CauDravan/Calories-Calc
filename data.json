@@ -2,7 +2,7 @@
   "FoundationFoods": [
     {
       "description": "Hummus, commercial",
-      "calories": 229
+      "calories": 960
     },
     {
       "description": "Tomatoes, grape, raw",
@@ -22,11 +22,11 @@
     },
     {
       "description": "Kale, raw",
-      "calories": 35.0
+      "calories": 148
     },
     {
       "description": "Egg, whole, raw, frozen, pasteurized",
-      "calories": 150
+      "calories": 627
     },
     {
       "description": "Egg, white, raw, frozen, pasteurized",
@@ -34,7 +34,7 @@
     },
     {
       "description": "Egg, white, dried",
-      "calories": 376
+      "calories": 1570.0
     },
     {
       "description": "Onion rings, breaded, par fried, frozen, prepared, heated in oven",
@@ -42,7 +42,7 @@
     },
     {
       "description": "Pickles, cucumber, dill or kosher dill",
-      "calories": 12.0
+      "calories": 50.0
     },
     {
       "description": "Cheese, parmesan, grated",
@@ -50,11 +50,11 @@
     },
     {
       "description": "Cheese, pasteurized process, American, vitamin D fortified",
-      "calories": 366
+      "calories": 1530.0
     },
     {
       "description": "Grapefruit juice, white, canned or bottled, unsweetened",
-      "calories": 37.0
+      "calories": 157
     },
     {
       "description": "Peaches, yellow, raw",
@@ -74,7 +74,7 @@
     },
     {
       "description": "Mustard, prepared, yellow",
-      "calories": 61.0
+      "calories": 254
     },
     {
       "description": "Kiwifruit, green, raw",
@@ -82,7 +82,7 @@
     },
     {
       "description": "Nectarines, raw",
-      "calories": 39.0
+      "calories": 163
     },
     {
       "description": "Cheese, cheddar",
@@ -94,11 +94,11 @@
     },
     {
       "description": "Cheese, mozzarella, low moisture, part-skim",
-      "calories": 298
+      "calories": 1240.0
     },
     {
       "description": "Egg, whole, dried",
-      "calories": 575
+      "calories": 2410.0
     },
     {
       "description": "Egg, yolk, raw, frozen, pasteurized",
@@ -110,7 +110,7 @@
     },
     {
       "description": "Yogurt, Greek, plain, nonfat",
-      "calories": 61.0
+      "calories": 256
     },
     {
       "description": "Yogurt, Greek, strawberry, nonfat",
@@ -118,11 +118,11 @@
     },
     {
       "description": "Oil, coconut",
-      "calories": 833
+      "calories": 3480.0
     },
     {
       "description": "Chicken, broilers or fryers, drumstick, meat only, cooked, braised",
-      "calories": 156
+      "calories": 652
     },
     {
       "description": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised",
@@ -134,7 +134,7 @@
     },
     {
       "description": "Ham, sliced, pre-packaged, deli meat (96%fat free, water added)",
-      "calories": 106
+      "calories": 443
     },
     {
       "description": "Olives, green, Manzanilla, stuffed with pimiento",
@@ -166,11 +166,11 @@
     },
     {
       "description": "Restaurant, Latino, tamale, pork",
-      "calories": 174
+      "calories": 728
     },
     {
       "description": "Restaurant, Latino, pupusas con frijoles (pupusas, bean)",
-      "calories": 229
+      "calories": 959
     },
     {
       "description": "Bread, whole-wheat, commercially prepared",
@@ -186,7 +186,7 @@
     },
     {
       "description": "Beef, round, eye of round roast, boneless, separable lean only, trimmed to 0\" fat, select, raw",
-      "calories": 122
+      "calories": 512
     },
     {
       "description": "Beef, round, top round roast, boneless, separable lean only, trimmed to 0\" fat, select, raw",
@@ -198,7 +198,7 @@
     },
     {
       "description": "Beef, short loin, t-bone steak, bone-in, separable lean only, trimmed to 1/8\" fat, choice, cooked, grilled",
-      "calories": 219
+      "calories": 918
     },
     {
       "description": "Carrots, frozen, unprepared",
@@ -206,11 +206,11 @@
     },
     {
       "description": "Cheese, dry white, queso seco",
-      "calories": 326
+      "calories": 1360.0
     },
     {
       "description": "Cheese, ricotta, whole milk",
-      "calories": 157
+      "calories": 657
     },
     {
       "description": "Cheese, swiss",
@@ -218,7 +218,7 @@
     },
     {
       "description": "Figs, dried, uncooked",
-      "calories": 249
+      "calories": 1040.0
     },
     {
       "description": "Lettuce, cos or romaine, raw",
@@ -234,15 +234,15 @@
     },
     {
       "description": "Milk, lowfat, fluid, 1% milkfat, with added vitamin A and vitamin D",
-      "calories": 43.0
+      "calories": 179
     },
     {
       "description": "Pears, raw, bartlett",
-      "calories": 57.0
+      "calories": 238
     },
     {
       "description": "Restaurant, Chinese, sweet and sour pork",
-      "calories": 260
+      "calories": 1090.0
     },
     {
       "description": "Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)",
@@ -250,11 +250,11 @@
     },
     {
       "description": "Sauce, salsa, ready-to-serve",
-      "calories": 29.0
+      "calories": 122
     },
     {
       "description": "Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D",
-      "calories": 50.0
+      "calories": 209
     },
     {
       "description": "Sausage, breakfast sausage, beef, pre-cooked, unprepared",
@@ -274,11 +274,11 @@
     },
     {
       "description": "Sausage, turkey, breakfast links, mild, raw",
-      "calories": 169
+      "calories": 706
     },
     {
       "description": "Sugars, granulated",
-      "calories": 385
+      "calories": 1610.0
     },
     {
       "description": "Turkey, ground, 93% lean, 7% fat, pan-broiled crumbles",
@@ -294,7 +294,7 @@
     },
     {
       "description": "Broccoli, raw",
-      "calories": 31.0
+      "calories": 132
     },
     {
       "description": "Ketchup, restaurant",
@@ -302,7 +302,7 @@
     },
     {
       "description": "Eggs, Grade A, Large, egg white",
-      "calories": 55.0
+      "calories": 231
     },
     {
       "description": "Eggs, Grade A, Large, egg yolk",
@@ -318,11 +318,11 @@
     },
     {
       "description": "Flour, wheat, all-purpose, enriched, bleached",
-      "calories": 366
+      "calories": 1530.0
     },
     {
       "description": "Flour, wheat, all-purpose, enriched, unbleached",
-      "calories": 358
+      "calories": 1500.0
     },
     {
       "description": "Flour, wheat, all-purpose, unenriched, unbleached",
@@ -338,7 +338,7 @@
     },
     {
       "description": "Flour, rice, white, unenriched",
-      "calories": 359
+      "calories": 1500.0
     },
     {
       "description": "Flour, corn, yellow, fine meal, enriched",
@@ -366,7 +366,7 @@
     },
     {
       "description": "Flour, rice, brown",
-      "calories": 365
+      "calories": 1580.0
     },
     {
       "description": "Flour, rice, glutinous",
@@ -386,7 +386,7 @@
     },
     {
       "description": "Bananas, ripe and slightly ripe, raw",
-      "calories": 97.0
+      "calories": 408
     }
   ]
 }
